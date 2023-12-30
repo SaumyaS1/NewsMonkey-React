@@ -34,19 +34,45 @@ export class News extends Component {
       document.title= `${this.capitalizeFirstLetter(this.props.category)} - NewsMonkey`;
     }
     // refactoring(componentDidmOUNT, handlePrevclick, handleNextClick) to a function ie updateNews()
-    async updateNews(){
+    // async updateNews(){
+    //   this.props.setProgress(10);
+    //   const url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    //   this.setState({loading:true});
+    //   let data= await fetch(url);
+    //   let parsedData= await data.json()
+    //   console.log(parsedData);
+    //   this.props.setProgress(70);
+    //   this.setState({
+    //     articles: parsedData.articles,
+    //     totalArticles: parsedData.totalResults,
+    //     loading: false, // Set loading to false after fetching data
+    //   })
+    //   this.props.setProgress(100);
+    // }
+
+    async updateNews() {
       this.props.setProgress(10);
-      const url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-      this.setState({loading:true});
-      let data= await fetch(url);
-      let parsedData= await data.json()
+    
+      // Use a callback function to ensure you're using the updated state value
+      this.setState((prevState) => ({
+        loading: true,
+        page: prevState.page + 1, // Increment the page number
+      }));
+    
+      const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    
+      let data = await fetch(url);
+      let parsedData = await data.json();
       console.log(parsedData);
+    
       this.props.setProgress(70);
-      this.setState({
-        articles: parsedData.articles,
+    
+      this.setState((prevState) => ({
+        articles: [...prevState.articles, ...parsedData.articles],
         totalArticles: parsedData.totalResults,
-        loading: false, // Set loading to false after fetching data
-      })
+        loading: false,
+      }));
+    
       this.props.setProgress(100);
     }
     // fecthing API dynamically
